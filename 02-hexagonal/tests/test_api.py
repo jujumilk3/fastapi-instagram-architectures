@@ -187,6 +187,29 @@ class TestFollow:
         assert resp.status_code == 400
         assert "Cannot follow yourself" in resp.json()["detail"]
 
+    async def test_followers_and_following_lists(
+        self, auth_client: AsyncClient, second_user_token: str
+    ):
+        saved = auth_client.headers.get("Authorization")
+
+        auth_client.headers["Authorization"] = f"Bearer {second_user_token}"
+        me_resp = await auth_client.get("/api/auth/me")
+        second_user_id = me_resp.json()["id"]
+        auth_client.headers["Authorization"] = saved
+
+        await auth_client.post(f"/api/follow/{second_user_id}")
+
+        me = await auth_client.get("/api/auth/me")
+        my_id = me.json()["id"]
+
+        followers_resp = await auth_client.get(f"/api/users/{second_user_id}/followers")
+        assert followers_resp.status_code == 200
+
+        following_resp = await auth_client.get(f"/api/users/{my_id}/following")
+        assert following_resp.status_code == 200
+
+        await auth_client.delete(f"/api/follow/{second_user_id}")
+
 
 class TestFeed:
     async def test_get_feed(self, auth_client: AsyncClient, second_user_token: str):
@@ -284,6 +307,11 @@ class TestMessage:
         assert resp.status_code == 200
         assert resp.json()["status"] == "ok"
 
+    async def test_list_conversations(self, auth_client: AsyncClient):
+        resp = await auth_client.get("/api/messages")
+        assert resp.status_code == 200
+        assert isinstance(resp.json(), list)
+
 
 class TestNotification:
     async def test_list_notifications(self, auth_client: AsyncClient, second_user_token: str):
@@ -312,6 +340,72 @@ class TestNotification:
         resp = await auth_client.post("/api/notifications/read-all")
         assert resp.status_code == 200
         assert resp.json()["status"] == "ok"
+
+    async def test_notification_created_on_follow(
+        self, auth_client: AsyncClient, second_user_token: str
+    ):
+        saved = auth_client.headers.get("Authorization")
+
+        auth_client.headers["Authorization"] = f"Bearer {second_user_token}"
+        me_resp = await auth_client.get("/api/auth/me")
+        second_user_id = me_resp.json()["id"]
+        auth_client.headers["Authorization"] = saved
+
+        me = await auth_client.get("/api/auth/me")
+        primary_user_id = me.json()["id"]
+
+        auth_client.headers["Authorization"] = f"Bearer {second_user_token}"
+        await auth_client.post(f"/api/follow/{primary_user_id}")
+
+        auth_client.headers["Authorization"] = saved
+        notif_resp = await auth_client.get("/api/notifications")
+        assert notif_resp.status_code == 200
+        notifications = notif_resp.json()
+        follow_notifs = [n for n in notifications if n["type"] == "follow"]
+        assert len(follow_notifs) >= 1
+
+        auth_client.headers["Authorization"] = f"Bearer {second_user_token}"
+        await auth_client.delete(f"/api/follow/{primary_user_id}")
+        auth_client.headers["Authorization"] = saved
+
+    async def test_notification_created_on_like(
+        self, auth_client: AsyncClient, second_user_token: str
+    ):
+        saved = auth_client.headers.get("Authorization")
+
+        auth_client.headers["Authorization"] = f"Bearer {second_user_token}"
+        post_resp = await auth_client.post(
+            "/api/posts",
+            json={"content": "Like for notif", "image_url": None},
+        )
+        post_id = post_resp.json()["id"]
+        auth_client.headers["Authorization"] = saved
+
+        await auth_client.post(f"/api/posts/{post_id}/likes")
+
+        auth_client.headers["Authorization"] = f"Bearer {second_user_token}"
+        notif_resp = await auth_client.get("/api/notifications")
+        assert notif_resp.status_code == 200
+        notifications = notif_resp.json()
+        like_notifs = [n for n in notifications if n["type"] == "like"]
+        assert len(like_notifs) >= 1
+        auth_client.headers["Authorization"] = saved
+
+    async def test_mark_single_notification_read(
+        self, auth_client: AsyncClient, second_user_token: str
+    ):
+        saved = auth_client.headers.get("Authorization")
+
+        auth_client.headers["Authorization"] = f"Bearer {second_user_token}"
+        notif_resp = await auth_client.get("/api/notifications")
+        notifications = notif_resp.json()
+        if notifications:
+            notif_id = notifications[0]["id"]
+            mark_resp = await auth_client.post(
+                f"/api/notifications/{notif_id}/read",
+            )
+            assert mark_resp.status_code == 200
+        auth_client.headers["Authorization"] = saved
 
 
 class TestSearch:
