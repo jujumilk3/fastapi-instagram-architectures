@@ -1,0 +1,296 @@
+Implement the following plan:
+
+# Plan: Strengthen Tests and Documentation
+
+## Context
+
+The project has 12 FastAPI Instagram architecture implementations. Despite the initial assumption, **no Korean text exists** - all content is already in English. The real work is:
+
+1. **Documentation**: READMEs for 07-12 are skeletal (16-25 lines) vs comprehensive for 01-06 (100-180 lines)
+2. **Tests**: Architectures 01-07, 09-11 have 29-30 tests each, while 08 (event-driven) and 12 (saga) have 37-39 tests with better edge-case coverage
+
+## Part 1: Documentation - Flesh out READMEs for 07-12
+
+Each README will be updated to match the quality of 01-06, including:
+- Architecture description with ASCII diagram
+- Directory structure
+- Key characteristics (3-5 bullet points)
+- Tech stack table
+- Quick start section
+- Test section
+- API endpoints table
+
+### Files to update:
+- `07-vertical-slice/README.md` (currently 16 lines → ~150 lines)
+- `08-event-driven/README.md` (currently 25 lines → ~150 lines)
+- `09-microkernel/README.md` (currently 21 lines → ~150 lines)
+- `10-functional-core-imperative-shell/README.md` (currently 16 lines → ~150 lines)
+- `11-actor-model/README.md` (currently 18 lines → ~150 lines)
+- `12-saga-choreography/README.md` (currently 16 lines → ~150 lines)
+
+## Part 2: Tests - Add missing edge-case tests
+
+Architectures 08 and 12 have tests that others lack. Add these common tests to architectures that are missing them:
+
+### Tests to add to 01-07, 09-11 (where missing):
+
+| Test | Description | Architectures Missing |
+|------|-------------|----------------------|
+| `test_followers_and_following_lists` | GET followers/following endpoints | 01-07, 10-11 |
+| `test_notification_created_on_follow` | Verify notification on follow action | 01-07, 09-11 |
+| `test_notification_created_on_like` | Verify notification on like action | 01-07, 09-11 |
+| `test_mark_single_notification_read` | Mark individual notification as read | 01-07, 09-11 |
+| `test_list_conversations` | GET /api/messages conversation list | 01-04, 08, 10-11 |
+| `test_delete_post_confirms_gone` | Verify 404 after delete | 01-07, 09-11 (08, 12 already verify) |
+
+### Test files to modify:
+- `01-layered/tests/test_api.py`
+- `02-hexagonal/tests/test_api.py`
+- `03-clean/tests/test_api.py`
+- `04-ddd/tests/test_api.py`
+- `05-modular-monolith/tests/test_api.py`
+- `06-cqrs-event-sourcing/tests/test_api.py`
+- `07-vertical-slice/tests/test_api.py`
+- `09-microkernel/tests/test_api.py`
+- `10-functional-core-imperative-shell/tests/test_api.py`
+- `11-actor-model/tests/test_api.py`
+
+Note: 08 and 12 already have good coverage, so only minor additions if any.
+
+## Verification
+
+After changes:
+```bash
+# Run tests for each architecture to verify no regressions
+for dir in 01-layered 02-hexagonal 03-clean 04-ddd 05-modular-monolith 06-cqrs-event-sourcing 07-vertical-slice 08-event-driven 09-microkernel 10-functional-core-imperative-shell 11-actor-model 12-saga-choreography; do
+  cd $dir && uv run pytest tests/ -v && cd ..
+done
+```
+
+
+If you need specific details from before exiting plan mode (like exact code snippets, error messages, or content you generated), read the full transcript at: /Users/gyu/.REDACTED.jsonl
+
+---
+
+This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+Analysis:
+Let me chronologically analyze the conversation:
+
+1. The user provided a detailed plan to implement in two parts:
+   - Part 1: Flesh out READMEs for architectures 07-12 (from skeletal ~16-25 lines to ~150 lines each)
+   - Part 2: Add missing edge-case tests to architectures 01-07, 09-11
+
+2. I read the skill file at ~/.claude/skills/my-dev-standards/SKILL.md for coding standards.
+
+3. I created 4 tasks:
+   - #1: Flesh out READMEs for architectures 07-12
+   - #2: Add missing edge-case tests to architectures 01-07, 09-11
+   - #3: Run all tests to verify no regressions
+   - #4: Update @STATUS.md
+
+4. I read the reference README (01-layered) and all 6 skeletal READMEs (07-12).
+
+5. I launched 7 parallel Explore agents to understand each architecture's structure, endpoints, test files, and patterns.
+
+6. I read the reference test files (08-event-driven and 12-saga-choreography) which have the best coverage (37-39 tests), plus all 10 target test files (01-07, 09-11).
+
+7. Analysis of missing tests per architecture:
+   - test_followers_and_following_lists: Missing from 01-07, 09-11
+   - test_notification_created_on_follow: Missing from 01-07, 09-11
+   - test_notification_created_on_like: Missing from 01-07, 09-11
+   - test_mark_single_notification_read: Missing from 01-07, 09-11
+   - test_list_conversations: Missing from 01-03, 05, 06, 10, 11 (04, 07, 09 already have it)
+   - test_delete_post 404 check: Missing from 01, 10, 11 (02-09 already verify 404)
+
+8. Part 1 completed: Wrote all 6 READMEs (07-12) with architecture diagrams, directory structures, key characteristics, tech stacks, quick start sections, and API endpoint tables.
+
+9. Part 2: Launched 6 parallel agents to add tests to all 10 test files:
+   - Agent 1: 01-layered (added 404 check, followers test, 3 notification tests)
+   - Agent 2: 02-hexagonal (added followers test, list_conversations, 3 notification tests)
+   - Agent 3: 03-clean + 04-ddd (added followers test, list_conversations for 03, 3 notification tests each)
+   - Agent 4: 05-modular + 06-cqrs (added followers test, list_conversations for 05, 3 notification tests each)
+   - Agent 5: 07-vertical + 09-microkernel (added followers test, 3 notification tests each)
+   - Agent 6: 10-fc/is + 11-actor (added 404 check, followers test, list_conversations, 3 notification tests each)
+
+10. Started running tests for architectures 01-06 in parallel. Results:
+    - 01-layered: 33 passed
+    - 02-hexagonal: 34 passed
+    - 03-clean: 34 passed
+    - 04-ddd: 33 passed (04 already had list_conversations + delete_not_owner)
+    - 05-modular-monolith: 34 passed
+    - 06-cqrs: 33 passed
+
+11. Still need to run tests for 07-12 and then update @STATUS.md.
+
+Important patterns observed:
+- Some files use `headers={"Authorization": f"Bearer {second_user_token}"}` per-request parameter style (03, 04, 05, 06, 07, 08, 09, 12)
+- Some files use saved_auth + header mutation pattern (01, 02, 10, 11)
+- The new tests were adapted to match each file's existing style
+
+No errors encountered so far - all 6 tested architectures passed.
+
+The conversation was interrupted while running tests 01-06. Tests for 07-12 still need to be run, and @STATUS.md needs to be updated.
+
+Summary:
+1. Primary Request and Intent:
+   The user provided a detailed implementation plan with two parts:
+   - **Part 1 (Documentation)**: Flesh out skeletal READMEs for architectures 07-12 to match the quality of 01-06 (from 16-25 lines to ~150 lines each), including architecture ASCII diagrams, directory structures, key characteristics, tech stack tables, quick start sections, test sections, and API endpoint tables.
+   - **Part 2 (Tests)**: Add 6 types of missing edge-case tests to architectures 01-07, 09-11 that already exist in 08-event-driven and 12-saga-choreography: `test_followers_and_following_lists`, `test_notification_created_on_follow`, `test_notification_created_on_like`, `test_mark_single_notification_read`, `test_list_conversations`, and `test_delete_post_confirms_gone` (404 check after delete).
+   - **Verification**: Run all 12 architecture test suites to verify no regressions.
+
+2. Key Technical Concepts:
+   - 12 FastAPI Instagram clone architecture patterns (layered, hexagonal, clean, DDD, modular monolith, CQRS, vertical slice, event-driven, microkernel, functional core/imperative shell, actor model, saga choreography)
+   - Python async testing with pytest-asyncio, httpx AsyncClient
+   - SQLAlchemy 2.0 async with aiosqlite
+   - JWT authentication patterns in tests (two user switching approaches)
+   - Two auth switching patterns in tests: per-request `headers=` parameter vs saved_auth/header mutation
+   - uv package manager for Python projects
+   - My-dev-standards skill: no redundant comments, never auto-commit/push, update @STATUS.md
+
+3. Files and Code Sections:
+
+   **READMEs Written (Part 1 - All completed):**
+   - `07-vertical-slice/README.md` - Vertical slice architecture with mediator pattern, features organized as self-contained slices with Request→Handler→Response
+   - `08-event-driven/README.md` - Event-driven with EventBroker pub/sub, producers/consumers/queries separation, 17 domain events
+   - `09-microkernel/README.md` - Plugin architecture with core + plugins, Plugin ABC with `register(app)` method, PluginRegistry
+   - `10-functional-core-imperative-shell/README.md` - Pure functions in core (no IO), all IO pushed to shell handlers
+   - `11-actor-model/README.md` - Actors with asyncio.Queue mailboxes, Ask pattern with asyncio.Future, 10 domain actors
+   - `12-saga-choreography/README.md` - Saga pattern with SagaExecutor/SagaStep, EventBus choreography, SagaLog audit trail
+
+   **Test Files Modified (Part 2 - All completed):**
+   - `01-layered/tests/test_api.py` - Added: 404 check in test_delete_post, test_followers_and_following_lists, test_notification_created_on_follow, test_notification_created_on_like, test_mark_single_notification_read (33 tests total)
+   - `02-hexagonal/tests/test_api.py` - Added: test_followers_and_following_lists, test_list_conversations, test_notification_created_on_follow, test_notification_created_on_like, test_mark_single_notification_read (34 tests)
+   - `03-clean/tests/test_api.py` - Added: test_followers_and_following_lists, test_list_conversations, 3 notification tests (34 tests)
+   - `04-ddd/tests/test_api.py` - Added: test_followers_and_following_lists, 3 notification tests (33 tests, already had list_conversations)
+   - `05-modular-monolith/tests/test_api.py` - Added: test_followers_and_following_lists, test_list_conversations, 3 notification tests (34 tests)
+   - `06-cqrs-event-sourcing/tests/test_api.py` - Added: test_followers_and_following_lists, 3 notification tests (33 tests)
+   - `07-vertical-slice/tests/test_api.py` - Added: test_followers_and_following_lists, 3 notification tests
+   - `09-microkernel/tests/test_api.py` - Added: test_followers_and_following_lists, 3 notification tests
+   - `10-functional-core-imperative-shell/tests/test_api.py` - Added: 404 check, test_followers_and_following_lists, test_list_conversations, 3 notification tests
+   - `11-actor-model/tests/test_api.py` - Added: 404 check, test_followers_and_following_lists, test_list_conversations, 3 notification tests
+
+   **Key test code pattern (from 08/12 reference, used across all files with style adaptations):**
+   ```python
+   async def test_followers_and_following_lists(
+       self, auth_client: AsyncClient, second_user_token: str
+   ):
+       other_me = await auth_client.get(
+           "/api/auth/me",
+           headers={"Authorization": f"Bearer {second_user_token}"},
+       )
+       other_id = other_me.json()["id"]
+       await auth_client.post(f"/api/follow/{other_id}")
+       me = await auth_client.get("/api/auth/me")
+       my_id = me.json()["id"]
+       followers_resp = await auth_client.get(f"/api/users/{other_id}/followers")
+       assert followers_resp.status_code == 200
+       following_resp = await auth_client.get(f"/api/users/{my_id}/following")
+       assert following_resp.status_code == 200
+       await auth_client.delete(f"/api/follow/{other_id}")
+
+   async def test_notification_created_on_follow(
+       self, auth_client: AsyncClient, second_user_token: str
+   ):
+       other_me = await auth_client.get(
+           "/api/auth/me",
+           headers={"Authorization": f"Bearer {second_user_token}"},
+       )
+       other_id = other_me.json()["id"]
+       await auth_client.post(f"/api/follow/{other_id}")
+       notif_resp = await auth_client.get(
+           "/api/notifications",
+           headers={"Authorization": f"Bearer {second_user_token}"},
+       )
+       assert notif_resp.status_code == 200
+       notifications = notif_resp.json()
+       follow_notifs = [n for n in notifications if n["type"] == "follow"]
+       assert len(follow_notifs) >= 1
+       await auth_client.delete(f"/api/follow/{other_id}")
+
+   async def test_notification_created_on_like(
+       self, auth_client: AsyncClient, second_user_token: str
+   ):
+       post_resp = await auth_client.post(
+           "/api/posts",
+           json={"content": "Like for notif", "image_url": None},
+           headers={"Authorization": f"Bearer {second_user_token}"},
+       )
+       post_id = post_resp.json()["id"]
+       await auth_client.post(f"/api/posts/{post_id}/likes")
+       notif_resp = await auth_client.get(
+           "/api/notifications",
+           headers={"Authorization": f"Bearer {second_user_token}"},
+       )
+       assert notif_resp.status_code == 200
+       notifications = notif_resp.json()
+       like_notifs = [n for n in notifications if n["type"] == "like"]
+       assert len(like_notifs) >= 1
+
+   async def test_mark_single_notification_read(
+       self, auth_client: AsyncClient, second_user_token: str
+   ):
+       notif_resp = await auth_client.get(
+           "/api/notifications",
+           headers={"Authorization": f"Bearer {second_user_token}"},
+       )
+       notifications = notif_resp.json()
+       if notifications:
+           notif_id = notifications[0]["id"]
+           mark_resp = await auth_client.post(
+               f"/api/notifications/{notif_id}/read",
+               headers={"Authorization": f"Bearer {second_user_token}"},
+           )
+           assert mark_resp.status_code == 200
+
+   async def test_list_conversations(self, auth_client: AsyncClient):
+       resp = await auth_client.get("/api/messages")
+       assert resp.status_code == 200
+       assert isinstance(resp.json(), list)
+   ```
+
+   **For 10-fc/is and 11-actor (use saved_auth pattern instead):**
+   Tests were adapted to use the `saved_auth = auth_client.headers.get("Authorization")` / `auth_client.headers["Authorization"] = f"Bearer {second_user_token}"` pattern to match existing test style in those files.
+
+   **Reference files read but not modified:**
+   - `08-event-driven/tests/test_api.py` (37 tests - reference implementation)
+   - `12-saga-choreography/tests/test_api.py` (39 tests - reference implementation)
+   - `~/.claude/skills/my-dev-standards/SKILL.md` (coding standards)
+
+4. Errors and fixes:
+   - No errors encountered. All 6 tested architectures (01-06) passed all tests on first run.
+   - cSpell warnings appeared for variable names like "notif" and "notifs" - these are just IDE linting warnings, not actual errors.
+
+5. Problem Solving:
+   - Identified that different test files use different auth-switching patterns (per-request headers vs saved_auth mutation) and adapted new tests accordingly
+   - Determined exact missing tests per architecture by reading all test files rather than trusting the plan blindly (e.g., 04-ddd already had test_list_conversations, 02-09 already had 404 checks in delete tests)
+   - Used parallel agent execution for both exploration and editing to maximize efficiency
+
+6. All user messages:
+   - First message: "Implement the following plan:" followed by the detailed plan for strengthening tests and documentation across 12 FastAPI Instagram architecture implementations. Plan included Part 1 (READMEs for 07-12), Part 2 (edge-case tests for 01-07, 09-11), and a verification step.
+
+7. Pending Tasks:
+   - **Task #3**: Run tests for architectures 07-12 (01-06 already verified, all passing)
+   - **Task #4**: Update @STATUS.md with completed work
+
+8. Current Work:
+   I was in the middle of running tests for verification (Task #3). Tests for architectures 01-06 completed successfully:
+   - 01-layered: 33 passed
+   - 02-hexagonal: 34 passed
+   - 03-clean: 34 passed
+   - 04-ddd: 33 passed
+   - 05-modular-monolith: 34 passed
+   - 06-cqrs: 33 passed
+   
+   Tests for 07-12 have NOT yet been run.
+
+9. Optional Next Step:
+   Run tests for the remaining 6 architectures (07-vertical-slice, 08-event-driven, 09-microkernel, 10-functional-core-imperative-shell, 11-actor-model, 12-saga-choreography) to complete verification, then update @STATUS.md. The plan's verification step states:
+   ```bash
+   for dir in 01-layered 02-hexagonal 03-clean 04-ddd 05-modular-monolith 06-cqrs-event-sourcing 07-vertical-slice 08-event-driven 09-microkernel 10-functional-core-imperative-shell 11-actor-model 12-saga-choreography; do
+     cd $dir && uv run pytest tests/ -v && cd ..
+   done
+   ```
+
+If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: /Users/gyu/.REDACTED.jsonl
+Please continue the conversation from where we left off without asking the user any further questions. Continue with the last task that you were asked to work on.
