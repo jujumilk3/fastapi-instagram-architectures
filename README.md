@@ -1,23 +1,23 @@
 # FastAPI Instagram Architectures
 
-Instagram의 핵심 도메인을 **12가지 아키텍처 패턴**으로 각각 구현한 학습용 프로젝트. 동일한 API 엔드포인트를 유지하면서 아키텍처 구조만 다르게 설계하여 각 패턴의 장단점을 직접 비교할 수 있다.
+A learning project implementing Instagram's core domain with **12 architecture patterns**. All projects share identical API endpoints while differing only in architectural structure, allowing direct comparison of each pattern's strengths and weaknesses.
 
 ## Architectures
 
 | # | Architecture | Description | Complexity |
 |---|---|---|---|
-| [01](./01-layered/) | **Layered** | 수평 슬라이싱. API → Service → Repository → Model | Low |
-| [02](./02-hexagonal/) | **Hexagonal (Ports & Adapters)** | 의존성이 항상 도메인을 향함. Port(ABC) + Adapter(구현체) | Medium |
-| [03](./03-clean/) | **Clean Architecture** | 4개 동심원 레이어. Use Case별 1클래스 1메서드(execute) | Medium-High |
+| [01](./01-layered/) | **Layered** | Horizontal slicing. API → Service → Repository → Model | Low |
+| [02](./02-hexagonal/) | **Hexagonal (Ports & Adapters)** | Dependencies always point toward the domain. Port(ABC) + Adapter(impl) | Medium |
+| [03](./03-clean/) | **Clean Architecture** | 4 concentric layers. One class per Use Case with single execute() method | Medium-High |
 | [04](./04-ddd/) | **Domain-Driven Design** | Rich Domain Model. Aggregate, Value Object, Domain Event | High |
-| [05](./05-modular-monolith/) | **Modular Monolith** | 기능별 수직 슬라이싱. 모듈 = 잠재적 마이크로서비스 경계 | Medium |
-| [06](./06-cqrs-event-sourcing/) | **CQRS + Event Sourcing** | 쓰기/읽기 경로 분리. Append-only Event Store + Projection | High |
-| [07](./07-vertical-slice/) | **Vertical Slice** | Use Case별 완전 독립 슬라이스. Request → Mediator → Handler → Response | Medium |
-| [08](./08-event-driven/) | **Event-Driven** | 이벤트 브로커 중심. Producer → Event Channel → Consumer | Medium-High |
-| [09](./09-microkernel/) | **Microkernel (Plugin)** | Core + Plugin Registry. 각 도메인이 플러그인으로 자체 등록 | Medium |
-| [10](./10-functional-core-imperative-shell/) | **Functional Core, Imperative Shell** | 순수 함수(비즈니스 로직) + 불순 셸(IO). 사이드이펙트 경계 분리 | Medium |
-| [11](./11-actor-model/) | **Actor Model** | Actor별 독립 상태 + 메시지 패싱. asyncio.Queue 메일박스 | Medium-High |
-| [12](./12-saga-choreography/) | **Saga / Choreography** | 분산 트랜잭션 관리. 보상 액션 + 이벤트 기반 코레오그래피 | High |
+| [05](./05-modular-monolith/) | **Modular Monolith** | Vertical slicing by feature. Module = potential microservice boundary | Medium |
+| [06](./06-cqrs-event-sourcing/) | **CQRS + Event Sourcing** | Write/read path separation. Append-only Event Store + Projection | High |
+| [07](./07-vertical-slice/) | **Vertical Slice** | Fully independent slice per use case. Request → Mediator → Handler → Response | Medium |
+| [08](./08-event-driven/) | **Event-Driven** | Event broker centric. Producer → Event Channel → Consumer | Medium-High |
+| [09](./09-microkernel/) | **Microkernel (Plugin)** | Core + Plugin Registry. Each domain self-registers as a plugin | Medium |
+| [10](./10-functional-core-imperative-shell/) | **Functional Core, Imperative Shell** | Pure functions (business logic) + impure shell (IO). Side-effect boundary separation | Medium |
+| [11](./11-actor-model/) | **Actor Model** | Independent state per actor + message passing. asyncio.Queue mailbox | Medium-High |
+| [12](./12-saga-choreography/) | **Saga / Choreography** | Distributed transaction management. Compensating actions + event-based choreography | High |
 
 ## Tech Stack
 
@@ -31,19 +31,19 @@ Instagram의 핵심 도메인을 **12가지 아키텍처 패턴**으로 각각 �
 ## Quick Start
 
 ```bash
-# 원하는 아키텍처 디렉토리로 이동
+# Navigate to the desired architecture directory
 cd 01-layered
 
-# 의존성 설치
+# Install dependencies
 uv sync
 
-# 서버 실행
+# Run the server
 uv run uvicorn layered.main:app --reload
 
-# Swagger UI 확인
+# Open Swagger UI
 open http://localhost:8000/docs
 
-# 테스트 실행
+# Run tests
 uv run pytest tests/ -v
 ```
 
@@ -66,22 +66,22 @@ uv run pytest tests/ -v
 
 ## Domain
 
-Instagram의 핵심 기능을 10개 도메인으로 구성:
+Instagram's core features organized into 10 domains:
 
-- **User** - 회원가입, 로그인, 프로필
-- **Post** - 게시글 CRUD, 이미지 URL
-- **Comment** - 게시글 댓글
-- **Like** - 좋아요 토글
-- **Follow** - 팔로우/언팔로우
-- **Feed** - 팔로잉 유저의 게시글 피드
-- **Story** - 24시간 스토리
-- **Message** - 1:1 다이렉트 메시지
-- **Notification** - 알림 (좋아요, 댓글, 팔로우)
-- **Search** - 유저/해시태그/게시글 검색
+- **User** - Registration, login, profile
+- **Post** - Post CRUD, image URL
+- **Comment** - Post comments
+- **Like** - Like toggle
+- **Follow** - Follow/unfollow
+- **Feed** - Feed of posts from followed users
+- **Story** - 24-hour stories
+- **Message** - 1:1 direct messages
+- **Notification** - Notifications (likes, comments, follows)
+- **Search** - User/hashtag/post search
 
 ## API Endpoints
 
-모든 12개 프로젝트가 동일한 API 계약을 공유한다:
+All 12 projects share the same API contract:
 
 ```
 POST   /api/auth/register
@@ -130,7 +130,7 @@ GET    /api/search/posts/hashtag/{tag}
 
 | Architecture | Tests | Time |
 |---|---|---|
-| 01-layered | 29 passed | ~2s |
+| 01-layered | 29 passed | ~9s |
 | 02-hexagonal | 29 passed | ~2s |
 | 03-clean | 29 passed | ~9s |
 | 04-ddd | 29 passed | ~9s |
@@ -189,9 +189,9 @@ GET    /api/search/posts/hashtag/{tag}
 | DDD | Complex domains, team collaboration |
 | Modular Monolith | Growing monolith, future microservice split |
 | CQRS + ES | Audit trails, event replay, read/write scale separately |
-| Vertical Slice | Feature 단위 독립 개발, 대규모 팀 협업 |
-| Event-Driven | 비동기 사이드이펙트, 컴포넌트 디커플링 |
-| Microkernel | 플러그인 기반 확장, 동적 기능 추가/제거 |
-| Functional Core | 테스트 용이성 극대화, 순수 함수 중심 설계 |
-| Actor Model | 동시성 제어, 메시지 기반 통신, 독립 상태 관리 |
-| Saga / Choreography | 분산 트랜잭션, 보상 패턴, 멀티스텝 워크플로우 |
+| Vertical Slice | Independent feature development, large team collaboration |
+| Event-Driven | Async side effects, component decoupling |
+| Microkernel | Plugin-based extensibility, dynamic feature add/remove |
+| Functional Core | Maximum testability, pure function-centric design |
+| Actor Model | Concurrency control, message-based communication, independent state management |
+| Saga / Choreography | Distributed transactions, compensation patterns, multi-step workflows |
