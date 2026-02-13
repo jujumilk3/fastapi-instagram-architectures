@@ -1,6 +1,6 @@
 # FastAPI Instagram Architectures
 
-Instagram의 핵심 도메인을 **6가지 아키텍처 패턴**으로 각각 구현한 학습용 프로젝트. 동일한 API 엔드포인트를 유지하면서 아키텍처 구조만 다르게 설계하여 각 패턴의 장단점을 직접 비교할 수 있다.
+Instagram의 핵심 도메인을 **12가지 아키텍처 패턴**으로 각각 구현한 학습용 프로젝트. 동일한 API 엔드포인트를 유지하면서 아키텍처 구조만 다르게 설계하여 각 패턴의 장단점을 직접 비교할 수 있다.
 
 ## Architectures
 
@@ -12,6 +12,12 @@ Instagram의 핵심 도메인을 **6가지 아키텍처 패턴**으로 각각 �
 | [04](./04-ddd/) | **Domain-Driven Design** | Rich Domain Model. Aggregate, Value Object, Domain Event | High |
 | [05](./05-modular-monolith/) | **Modular Monolith** | 기능별 수직 슬라이싱. 모듈 = 잠재적 마이크로서비스 경계 | Medium |
 | [06](./06-cqrs-event-sourcing/) | **CQRS + Event Sourcing** | 쓰기/읽기 경로 분리. Append-only Event Store + Projection | High |
+| [07](./07-vertical-slice/) | **Vertical Slice** | Use Case별 완전 독립 슬라이스. Request → Mediator → Handler → Response | Medium |
+| [08](./08-event-driven/) | **Event-Driven** | 이벤트 브로커 중심. Producer → Event Channel → Consumer | Medium-High |
+| [09](./09-microkernel/) | **Microkernel (Plugin)** | Core + Plugin Registry. 각 도메인이 플러그인으로 자체 등록 | Medium |
+| [10](./10-functional-core-imperative-shell/) | **Functional Core, Imperative Shell** | 순수 함수(비즈니스 로직) + 불순 셸(IO). 사이드이펙트 경계 분리 | Medium |
+| [11](./11-actor-model/) | **Actor Model** | Actor별 독립 상태 + 메시지 패싱. asyncio.Queue 메일박스 | Medium-High |
+| [12](./12-saga-choreography/) | **Saga / Choreography** | 분산 트랜잭션 관리. 보상 액션 + 이벤트 기반 코레오그래피 | High |
 
 ## Tech Stack
 
@@ -51,6 +57,12 @@ uv run pytest tests/ -v
 | `04-ddd` | `ddd` | `uv run uvicorn ddd.main:app --reload` |
 | `05-modular-monolith` | `modular_monolith` | `uv run uvicorn modular_monolith.main:app --reload` |
 | `06-cqrs-event-sourcing` | `cqrs_es` | `uv run uvicorn cqrs_es.main:app --reload` |
+| `07-vertical-slice` | `vertical_slice` | `uv run uvicorn vertical_slice.main:app --reload` |
+| `08-event-driven` | `event_driven` | `uv run uvicorn event_driven.main:app --reload` |
+| `09-microkernel` | `microkernel` | `uv run uvicorn microkernel.main:app --reload` |
+| `10-functional-core-imperative-shell` | `functional_core` | `uv run uvicorn functional_core.main:app --reload` |
+| `11-actor-model` | `actor_model` | `uv run uvicorn actor_model.main:app --reload` |
+| `12-saga-choreography` | `saga_choreography` | `uv run uvicorn saga_choreography.main:app --reload` |
 
 ## Domain
 
@@ -69,7 +81,7 @@ Instagram의 핵심 기능을 10개 도메인으로 구성:
 
 ## API Endpoints
 
-모든 6개 프로젝트가 동일한 API 계약을 공유한다:
+모든 12개 프로젝트가 동일한 API 계약을 공유한다:
 
 ```
 POST   /api/auth/register
@@ -124,6 +136,12 @@ GET    /api/search/posts/hashtag/{tag}
 | 04-ddd | 29 passed | ~9s |
 | 05-modular-monolith | 30 passed | ~9s |
 | 06-cqrs-event-sourcing | 29 passed | ~9s |
+| 07-vertical-slice | 30 passed | ~9s |
+| 08-event-driven | 37 passed | ~10s |
+| 09-microkernel | 30 passed | ~9s |
+| 10-functional-core-imperative-shell | 60 passed | ~9s |
+| 11-actor-model | 29 passed | ~8s |
+| 12-saga-choreography | 39 passed | ~11s |
 
 ## Architecture Comparison
 
@@ -136,6 +154,12 @@ GET    /api/search/posts/hashtag/{tag}
 04-ddd:            Infrastructure → Application → Domain (outside-in, rich model)
 05-modular:        Module[Router → Service → Model] (vertical per feature)
 06-cqrs-es:        Command → Handler → Aggregate → EventStore → Projection (event flow)
+07-vertical-slice: Router → Mediator → Handler[Request→DB→Response] (per use case)
+08-event-driven:   Producer → EventBroker → Consumer (pub/sub decoupling)
+09-microkernel:    Core[Registry] ← Plugin[Router+Service+Model] (plugin self-registration)
+10-functional:     Router → Shell[IO] → Core[Pure Functions] → Shell[IO] (purity boundary)
+11-actor-model:    Router → Message → Actor[Mailbox → receive()] (message passing)
+12-saga:           Router → SagaExecutor[Step → Step → ...] + Compensate on failure (saga flow)
 ```
 
 ### Model Strategy
@@ -148,6 +172,12 @@ GET    /api/search/posts/hashtag/{tag}
 | 04-ddd | Rich aggregate (dataclass) | SQLAlchemy | Mapper functions |
 | 05-modular | Same (anemic ORM) | SQLAlchemy | None needed |
 | 06-cqrs-es | Aggregate (write) + Projection (read) | SQLAlchemy | Event → Projection |
+| 07-vertical-slice | Same (anemic ORM) | SQLAlchemy | None needed |
+| 08-event-driven | Same (anemic ORM) | SQLAlchemy | None needed |
+| 09-microkernel | Same (anemic ORM) | SQLAlchemy | None needed |
+| 10-functional | Same (anemic ORM) | SQLAlchemy | None needed |
+| 11-actor-model | Same (anemic ORM) | SQLAlchemy | None needed |
+| 12-saga | Same (anemic ORM) | SQLAlchemy | None needed |
 
 ### When to Use
 
@@ -159,3 +189,9 @@ GET    /api/search/posts/hashtag/{tag}
 | DDD | Complex domains, team collaboration |
 | Modular Monolith | Growing monolith, future microservice split |
 | CQRS + ES | Audit trails, event replay, read/write scale separately |
+| Vertical Slice | Feature 단위 독립 개발, 대규모 팀 협업 |
+| Event-Driven | 비동기 사이드이펙트, 컴포넌트 디커플링 |
+| Microkernel | 플러그인 기반 확장, 동적 기능 추가/제거 |
+| Functional Core | 테스트 용이성 극대화, 순수 함수 중심 설계 |
+| Actor Model | 동시성 제어, 메시지 기반 통신, 독립 상태 관리 |
+| Saga / Choreography | 분산 트랜잭션, 보상 패턴, 멀티스텝 워크플로우 |

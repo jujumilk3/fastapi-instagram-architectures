@@ -5,7 +5,7 @@
 
 ## Overview
 
-Instagram clone implemented with 6 different architecture patterns. Each is an independent FastAPI project with identical API endpoints, sharing no code.
+Instagram clone implemented with 12 different architecture patterns. Each is an independent FastAPI project with identical API endpoints, sharing no code.
 
 ## Architecture Status
 
@@ -17,6 +17,12 @@ Instagram clone implemented with 6 different architecture patterns. Each is an i
 | 04 | Domain-Driven Design | Done | 29 passed | Ready |
 | 05 | Modular Monolith | Done | 30 passed | Ready |
 | 06 | CQRS + Event Sourcing | Done | 29 passed | Ready |
+| 07 | Vertical Slice | Done | 30 passed | Ready |
+| 08 | Event-Driven | Done | 37 passed | Ready |
+| 09 | Microkernel (Plugin) | Done | 30 passed | Ready |
+| 10 | Functional Core, Imperative Shell | Done | 60 passed | Ready |
+| 11 | Actor Model | Done | 29 passed | Ready |
+| 12 | Saga / Choreography | Done | 39 passed | Ready |
 
 ## Common Tech Stack
 
@@ -25,7 +31,7 @@ Instagram clone implemented with 6 different architecture patterns. Each is an i
 - uv package manager, hatchling build system
 - pytest + pytest-asyncio + httpx for testing
 
-## Common API Endpoints (all 6 projects)
+## Common API Endpoints (all 12 projects)
 
 - Auth: register, login, me
 - Users: get profile, update me, get user posts/followers/following
